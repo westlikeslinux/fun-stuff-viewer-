@@ -1,9 +1,16 @@
 import express from 'express';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-app.use(cors()); app.use(express.json());
+app.use(cors()); 
+app.use(express.json());
+app.use(express.static(__dirname));
 
 const NAVIGATION_INTERCEPT = `<script>(function(){
   document.addEventListener('click',function(e){var el=e.target.closest('a');if(el&&el.href&&el.href.startsWith('http')){e.preventDefault();window.parent.postMessage({type:'NAVIGATE',url:el.href},'*');}});
@@ -15,9 +22,9 @@ function rewriteUrls(html, baseUrl) {
   try {
     const base=new URL(baseUrl), origin=base.origin, baseHref=baseUrl.substring(0,baseUrl.lastIndexOf('/')+1);
     return html
-      .replace(/(src|href|action)="(\/\/[^"]*?)"/gi,(_,a,u)=>`${a}="${base.protocol}${u}"`)
-      .replace(/(src|href|action)="(\/[^"]*?)"/gi,(_,a,u)=>`${a}="${origin}${u}"`)
-      .replace(/(src|href|action)="(?!https?:\/\/|\/\/|#|mailto:|javascript:)([^"]*?)"/gi,(_,a,u)=>u?`${a}="${baseHref}${u}"`:_);
+      .replace(/(src|href|action)=\"(\/\/[^\"]*?)\"/gi,(_,a,u)=>`${a}=\"${base.protocol}${u}\"`)
+      .replace(/(src|href|action)=\"(\/[^\"]*?)\"/gi,(_,a,u)=>`${a}=\"${origin}${u}\"`)
+      .replace(/(src|href|action)=\"(?!https?:\/\/|\/\/|#|mailto:|javascript:)([^\"]*?)\"/gi,(_,a,u)=>u?`${a}=\"${baseHref}${u}\"`:_);
   } catch { return html; }
 }
 
@@ -56,13 +63,14 @@ app.get('/proxy/metadata', async (req, res) => {
     clearTimeout(t);
     const finalUrl=upstream.url??targetUrl, html=await upstream.text();
     const title       = (html.match(/<title[^>]*>([^<]*)<\/title>/i)||[])[1]?.trim()||null;
-    const description = (html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i)||[])[1]?.trim()||null;
+    const description = (html.match(/<meta[^>]*name=[\"']description[\"'][^>]*content=[\"']([^\"']*)[\"']/i)||[])[1]?.trim()||null;
     let favicon=null;
-    const fm = html.match(/<link[^>]*rel=["'](?:shortcut )?icon["'][^>]*href=["']([^"']*)["']/i);
+    const fm = html.match(/<link[^>]*rel=[\"'](?:shortcut )?icon[\"'][^>]*href=[\"']([^\"']*)[\"']/i);
     if (fm) try { favicon=new URL(fm[1],finalUrl).toString(); } catch {}
     if (!favicon) try { favicon=new URL('/favicon.ico',finalUrl).toString(); } catch {}
     res.json({ url: finalUrl, title, description, favicon });
   } catch(err) { res.status(502).json({ error: err?.name==='AbortError'?'Timed out':err?.message||'Failed' }); }
 });
 
-app.listen(PORT, () => console.log(`Proxy running at http://localhost:${PORT}\nOpen index.html with VSCode Live Server`));
+app.listen(PORT, () => console.log(`Proxy running at http://localhost:${PORT}\nServing static files from ${__dirname}`));
+
