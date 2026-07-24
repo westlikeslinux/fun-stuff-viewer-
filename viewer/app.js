@@ -1,4 +1,4 @@
-const PROXY_BASE = 'http://localhost:3001';
+const PROXY_BASE = window.location.origin;
 
 const addressBar   = document.getElementById('address-bar');
 const btnGo        = document.getElementById('btn-go');
@@ -174,3 +174,4 @@ document.addEventListener('keydown', e => {
 });
 
 renderBookmarks(); showStart(); updateNav(); updateStarBtn();
+
