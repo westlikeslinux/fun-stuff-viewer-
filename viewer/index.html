@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="tab-bar">
+      <div class="tab active" id="current-tab">
+        <img class="tab-favicon" id="tab-favicon" src="" alt="" style="display:none" />
+        <span class="tab-title" id="tab-title">New Tab</span>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="nav-buttons">
+        <button class="nav-btn" id="btn-back" title="Back" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="nav-btn" id="btn-forward" title="Forward" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="nav-btn" id="btn-refresh" title="Refresh">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <div class="address-bar-wrapper">
+        <img class="address-favicon" id="address-favicon" src="" alt="" style="display:none" />
+        <div class="loading-spinner" id="loading-spinner"></div>
+        <input type="text" class="address-bar" id="address-bar"
+          placeholder="Enter a URL (e.g. https://example.com)"
+          autocomplete="off" spellcheck="false" />
+      </div>
+      <button class="go-btn" id="btn-go">Go</button>
+      <button class="nav-btn star-btn" id="btn-star" title="Bookmark this page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+    </div>
+    <div class="bookmarks-bar" id="bookmarks-bar"></div>
+    <div class="content-area">
+      <div class="start-screen" id="start-screen">
+        <div class="start-inner">
+          <div class="start-logo">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2"/>
+              <ellipse cx="32" cy="32" rx="12" ry="30" stroke="currentColor" stroke-width="2"/>
+              <line x1="2" y1="32" x2="62" y2="32" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <h1 class="start-title">Web Viewer</h1>
+          <p class="start-subtitle">Type a URL in the address bar above to get started</p>
+          <div class="quick-links" id="quick-links"></div>
+        </div>
+      </div>
+      <div class="error-screen" id="error-screen" style="display:none">
+        <div class="error-inner">
+          <div class="error-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h2 class="error-title">Unable to load page</h2>
+          <p class="error-message" id="error-message"></p>
+          <button class="go-btn retry-btn" id="btn-retry">Try Again</button>
+        </div>
+      </div>
+      <iframe id="viewer-frame" class="viewer-frame"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        style="display:none" title="Web Viewer Content"></iframe>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
